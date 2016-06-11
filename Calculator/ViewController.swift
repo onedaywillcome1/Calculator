@@ -37,7 +37,6 @@ class ViewController: UIViewController {
     
     @IBAction func performOperation(sender: UIButton) {
         userInMiddleText = false
-        firstDigitisZero = false
         let mathematicalSymbol = sender.currentTitle!
         if mathematicalSymbol == "π" {
             display.text = String(M_PI)
