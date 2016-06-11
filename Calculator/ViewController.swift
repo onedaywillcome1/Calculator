@@ -10,17 +10,38 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    @IBOutlet weak var display: UILabel!
+    
+    var userInMiddleText = false
+    var firstDigitisZero = false
+    var appendingDigitisZero = false
+    
+    @IBAction func touchDigit(sender: UIButton) {
+        let digit = sender.currentTitle!
+        if userInMiddleText {
+            if digit == "0" && firstDigitisZero { display.text = digit }
+            else if digit != "0" && firstDigitisZero{
+                display.text = digit
+                firstDigitisZero = false
+            }
+            else{
+                let currentText = display.text
+                display.text = currentText!+digit
+            }
+        }else{
+            if digit == "0" { firstDigitisZero = true }
+            display.text = digit
+        }
+        userInMiddleText = true
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        print("Test")
-        // Dispose of any resources that can be recreated.
+    
+    @IBAction func performOperation(sender: UIButton) {
+        userInMiddleText = false
+        firstDigitisZero = false
+        let mathematicalSymbol = sender.currentTitle!
+        if mathematicalSymbol == "π" {
+            display.text = String(M_PI)
+        }
     }
-
-
 }
 
