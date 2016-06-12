@@ -12,13 +12,19 @@ import Foundation
 class CalculatorBrain {
     
     private var accumulator = 0.0
+    private var totalString = ""
+    
+    func logOperands(symbol:String) -> String{
+        totalString = totalString + symbol
+        return totalString
+    }
     
     func setOperand(operand: Double)  {
         accumulator = operand
-        print("accumulator: \(accumulator)")
     }
     
     private var operations: Dictionary<String,Operation> = [
+        "AC" : Operation.Clear,
         "π" : Operation.Constant(M_PI),
         "e" : Operation.Constant(M_E),
         "√" : Operation.UnaryOperation(sqrt),
@@ -31,6 +37,7 @@ class CalculatorBrain {
     ]
     
     private enum Operation {
+        case Clear
         case Constant(Double)
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double,Double) -> Double)
@@ -39,26 +46,26 @@ class CalculatorBrain {
     
     func performOperation(symbol: String)  {
         if let operation = operations[symbol]{
-            print("Operation: \(operation)")
             switch operation {
+            case .Clear: clear()
             case .Constant(let value): accumulator = value
             case .UnaryOperation (let function): accumulator = function(accumulator)
             case .BinaryOperation(let function):
-                print("function: \(function)")
                 executeBinaryOperation()
                 pending = pendingBinaryOperation(binaryFunction: function, firstOperand: accumulator)
-                print("Pending : \(pending)")
             case .Equals:
                 executeBinaryOperation()
             }
         }
     }
     
+    private func clear(){
+        pending = nil
+        accumulator = 0.0
+    }
     private func executeBinaryOperation() {
         if pending != nil {
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
-            print("first operand: \(pending!.firstOperand)")
-            print("accumulator2: \(accumulator)")
             pending = nil
         }
     }

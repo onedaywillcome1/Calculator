@@ -11,26 +11,32 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet private weak var display: UILabel!
+    @IBOutlet weak var historydisplay: UILabel!
     
     var userInMiddleText = false
-    var firstDigitisZero = false
+    
+    private var brain = CalculatorBrain()
     
     @IBAction private func touchDigit(sender: UIButton) {
         let digit = sender.currentTitle!
-        if userInMiddleText {
-            if digit == "0" && firstDigitisZero { display.text = digit }
-            else if digit != "0" && firstDigitisZero{
-                display.text = digit
-                firstDigitisZero = false
+        
+        historydisplay.text = brain.logOperands(digit)
+        
+        if userInMiddleText  {
+            let currentText = display.text
+            if digit == "." {
+                if display.text?.rangeOfString(".") == nil {
+                    display.text = currentText!+digit
+                }
             }
             else{
-                let currentText = display.text
                 display.text = currentText!+digit
             }
+
         }else{
-            if digit == "0" { firstDigitisZero = true }
             display.text = digit
         }
+        
         userInMiddleText = true
     }
     
@@ -44,16 +50,15 @@ class ViewController: UIViewController {
     }
     
     
-    private var brain = CalculatorBrain()
     
     @IBAction private func performOperation(sender: UIButton) {
         if userInMiddleText {
-            print("DisplayValue: \(displayValue)")
             brain.setOperand(displayValue)
             userInMiddleText = false
         }
         
         if let mathematicalSymbol = sender.currentTitle {
+            historydisplay.text = brain.logOperands(mathematicalSymbol)
             brain.performOperation(mathematicalSymbol)
         }
         displayValue = brain.result
